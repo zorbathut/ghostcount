@@ -31,10 +31,10 @@ function main_button(player)
 	if player.gui.left.gcFrame~=nil then
 		player.gui.left.gcFrame.destroy()
 	else
-		gcFrame=player.gui.left.add({type = "frame",name = "gcFrame", direction = "horizontal"})
+		gcFrame=player.gui.left.add({type = "frame", name = "gcFrame", direction = "horizontal"})
 		gcScroll=gcFrame.add({type = "scroll-pane", name = "gcScroll", vertical_scroll_policy = "auto"})
 		gcScroll.style.maximal_height = 400
-		gcTable=gcScroll.add({type = "table", column_count = 2, name = "gcTable", direction = "vertical"})
+		gcTable=gcScroll.add({type = "table", column_count = 3, name = "gcTable", direction = "vertical"})
 		updateGUI(player)
 	end
 end
@@ -43,11 +43,16 @@ function updateGUI(player)
 	gcTable=player.gui.left.gcFrame.gcScroll.gcTable
 	gcTable.clear()
 	gcTable.add({type="label",name="col1",caption="Item"})
-	gcTable.add({type="label",name="col2",caption="#"})
+	gcTable.add({type="label",name="col2",caption="Have"})
+	gcTable.add({type="label",name="col3",caption="Need"})
 	c=count_ghosts(player)
-	for k,v in spairs(c, function(t,a,b) return t[b] < t[a] end) do
-		gcTable.add({type="sprite",name=k,sprite="entity/"..k, caption=v})
-		gcTable.add({type="label",name=k.."-count", caption=v})
+	
+	for ent, need in spairs(c, function(t,a,b) return t[b] < t[a] end) do
+		local have = player.get_main_inventory().get_item_count(ent)
+		
+		gcTable.add({type="sprite",name="gc-request-"..ent,sprite="entity/"..ent, caption=ent})
+		gcTable.add({type="label",name=ent.."-have", caption=have})
+		gcTable.add({type="label",name=ent.."-need", caption=need})
 	end
 end
 
