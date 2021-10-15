@@ -17,13 +17,11 @@ end
 function count_ghosts(player)
 	local count={}
 	local test={}
-	for c in game.surfaces[1].get_chunks() do
-		for key, ent in pairs(game.surfaces[1].find_entities_filtered({area={{c.x * 32, c.y * 32}, {c.x * 32 + 32, c.y * 32 + 32}}, type="entity-ghost"})) do
-			if count[ent.ghost_name]==nil then
-				count[ent.ghost_name]=1
-			else
-				count[ent.ghost_name]=count[ent.ghost_name]+1
-			end
+	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
+		if count[ent.ghost_name]==nil then
+			count[ent.ghost_name]=1
+		else
+			count[ent.ghost_name]=count[ent.ghost_name]+1
 		end
 	end
 	return count
