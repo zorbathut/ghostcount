@@ -1,4 +1,5 @@
-require("mod-gui")
+local mod_gui = require("mod-gui")
+
 function init_gui(player)
 	if mod_gui.get_button_flow(player).ghostCountGUI~=nil then
 		mod_gui.get_button_flow(player).ghostCountGUI.destroy()
@@ -35,7 +36,7 @@ function main_button(player)
 		gcFrame=player.gui.left.add({type = "frame",name = "gcFrame", direction = "horizontal"})
 		gcScroll=gcFrame.add({type = "scroll-pane", name = "gcScroll", vertical_scroll_policy = "auto"})
 		gcScroll.style.maximal_height = 400
-		gcTable=gcScroll.add({type = "table", colspan=2,name = "gcTable", direction = "vertical"})
+		gcTable=gcScroll.add({type = "table", column_count = 2, name = "gcTable", direction = "vertical"})
 		updateGUI(player)
 	end
 end
