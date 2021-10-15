@@ -17,14 +17,16 @@ end
 function count_ghosts(player)
 	local count={}
 	local test={}
+	local example={}
 	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
 		if count[ent.ghost_name]==nil then
 			count[ent.ghost_name]=1
 		else
 			count[ent.ghost_name]=count[ent.ghost_name]+1
 		end
+		example[ent.ghost_name] = ent
 	end
-	return count
+	return count, example
 end
 
 function main_button(player)
@@ -77,9 +79,16 @@ script.on_event(defines.events.on_player_created, function(event)
     init_gui(game.players[event.player_index])
 end)
 script.on_event(defines.events.on_gui_click, function(event)
- 	if event.element.name=="ghostCountGUI" then
+ 	if event.element.name == "ghostCountGUI" then
     	main_button(game.players[event.player_index])
-    end
+    elseif event.element.name:find("gc-request-", 1, true) == 1 then
+		local name = event.element.name:sub(12, -1)
+		local c, e = count_ghosts(game.players[event.player_index])
+		if e[name] ~= nil then
+			game.print("dingo")
+			game.players[event.player_index].add_custom_alert(e[name], {type = "item", name = name}, {"item-name."..name}, true)
+		end
+	end	
 end)
 script.on_event(defines.events.on_tick, function(event)
     if event.tick % (60*settings.global["ghost-count-refresh"].value) == 0  then
