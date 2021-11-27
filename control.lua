@@ -90,7 +90,6 @@ script.on_event(defines.events.on_gui_click, function(event)
 		local name = event.element.name:sub(12, -1)
 		local c, e = count_ghosts(game.players[event.player_index])
 		if e[name] ~= nil then
-			game.print("dingo")
 			game.players[event.player_index].add_custom_alert(e[name], {type = "item", name = name}, {"item-name."..name}, true)
 		end
 	end	
