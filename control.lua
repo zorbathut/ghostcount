@@ -50,7 +50,12 @@ function updateGUI(player)
 	c=count_ghosts(player)
 	
 	for ent, need in spairs(c, function(t,a,b) return t[b] < t[a] end) do
-		local have = player.get_main_inventory().get_item_count(ent)
+		-- get the entity prototype so we can find out what item corresponds to this
+		local have = 0
+		local entproto = game.entity_prototypes[ent]
+		if entproto.items_to_place_this ~= nil then
+			have = player.get_main_inventory().get_item_count(entproto.items_to_place_this[1].name)
+		end
 		
 		gcTable.add({type="sprite",name="gc-request-"..ent,sprite="entity/"..ent, caption=ent})
 		gcTable.add({type="label",name=ent.."-have", caption=have})
