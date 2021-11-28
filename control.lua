@@ -87,10 +87,17 @@ script.on_event(defines.events.on_gui_click, function(event)
  	if event.element.name == "ghostCountGUI" then
     	main_button(game.players[event.player_index])
     elseif event.element.name:find("gc-request-", 1, true) == 1 then
+		-- see if we can get a useful item out of this
+		local signal = {type = "signal", name = "signal-info"}
 		local name = event.element.name:sub(12, -1)
+		local entproto = game.entity_prototypes[name]
+		if entproto.items_to_place_this ~= nil then
+			signal = {type = "item", name = entproto.items_to_place_this[1].name}
+		end
+		
 		local c, e = count_ghosts(game.players[event.player_index])
 		if e[name] ~= nil then
-			game.players[event.player_index].add_custom_alert(e[name], {type = "item", name = name}, {"item-name."..name}, true)
+			game.players[event.player_index].add_custom_alert(e[name], signal, {"item-name."..name}, true)
 		end
 	end	
 end)
