@@ -59,7 +59,12 @@ function updateGUI(player)
 		
 		gcTable.add({type="sprite",name="gc-request-"..ent,sprite="entity/"..ent, caption=ent})
 		gcTable.add({type="label",name=ent.."-have", caption=have})
-		gcTable.add({type="label",name=ent.."-need", caption=need})
+		
+		if have >= need then
+			gcTable.add({type="label",name=ent.."-need", caption={"", "[color=#666666]", need, "[/color]"}})
+		else
+			gcTable.add({type="label",name=ent.."-need", caption=need})
+		end
 	end
 end
 
