@@ -16,17 +16,37 @@ end
 
 function count_ghosts(player)
 	local count={}
-	local test={}
-	local example={}
 	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
 		if count[ent.ghost_name]==nil then
 			count[ent.ghost_name]=1
 		else
 			count[ent.ghost_name]=count[ent.ghost_name]+1
 		end
-		example[ent.ghost_name] = ent
 	end
-	return count, example
+	return count
+end
+
+function accumulate_examples(player, gname)
+	-- I'm legit surprised that performance runs well up to 5000. Test with more later, I guess?
+	local maxexamples = 5000
+	local count = 0
+	local examples = {}
+	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
+		if ent.ghost_name == gname then
+			count = count + 1
+			
+			if #examples < maxexamples then
+				table.insert(examples, ent)
+			else
+				rnd = math.random(1, count)
+				if rnd < maxexamples then
+					examples[rnd] = ent
+				end
+			end
+		end
+	end
+	
+	return examples
 end
 
 function main_button(player)
@@ -100,9 +120,9 @@ script.on_event(defines.events.on_gui_click, function(event)
 			signal = {type = "item", name = entproto.items_to_place_this[1].name}
 		end
 		
-		local c, e = count_ghosts(game.players[event.player_index])
-		if e[name] ~= nil then
-			game.players[event.player_index].add_custom_alert(e[name], signal, {"item-name."..name}, true)
+		local e = accumulate_examples(game.players[event.player_index], name)
+		for _, v in ipairs(e) do
+			game.players[event.player_index].add_custom_alert(v, signal, {"item-name."..name}, true)
 		end
 	end	
 end)
