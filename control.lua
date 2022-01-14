@@ -17,11 +17,11 @@ end
 function count_ghosts(player)
 	local count={}
 	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
-		if count[ent.ghost_name]==nil then
-			count[ent.ghost_name]=1
-		else
-			count[ent.ghost_name]=count[ent.ghost_name]+1
-		end
+		count[ent.ghost_name]=(count[ent.ghost_name] or 0) + 1
+	end
+	for key, ent in pairs(game.surfaces[1].find_entities_filtered({to_be_upgraded=true})) do
+		local target = ent.get_upgrade_target().name
+		count[target]=(count[target] or 0) + 1
 	end
 	return count
 end
@@ -31,8 +31,9 @@ function accumulate_examples(player, gname)
 	local maxexamples = 5000
 	local count = 0
 	local examples = {}
-	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
-		if ent.ghost_name == gname then
+	
+	local function process(ent, name)
+		if name == gname then
 			count = count + 1
 			
 			if #examples < maxexamples then
@@ -44,6 +45,13 @@ function accumulate_examples(player, gname)
 				end
 			end
 		end
+	end
+	
+	for key, ent in pairs(game.surfaces[1].find_entities_filtered({type="entity-ghost"})) do
+		process(ent, ent.ghost_name)
+	end
+	for key, ent in pairs(game.surfaces[1].find_entities_filtered({to_be_upgraded=true})) do
+		process(ent, ent.get_upgrade_target().name)
 	end
 	
 	return examples
